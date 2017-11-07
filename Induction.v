@@ -191,10 +191,22 @@ Fixpoint double (n:nat) :=
 
 (** Use induction to prove this simple fact about [double]: *)
 
+(**
+Theorem plus_n_Sm : ∀ n m : nat,
+  S (n + m) = n + (S m).
+*)
+
 Lemma double_plus : forall n, double n = n + n .
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+     intros n. induction n as [| n' IHn'].
+    - (* n = 0 *)
+      simpl. reflexivity.
+    - (* n = S n' *)
+     simpl. rewrite -> IHn'. 
+     pose (proof_of_plus_n_Sm := plus_n_Sm n' n').
+     rewrite -> proof_of_plus_n_Sm. reflexivity. Qed.
+
+
 
 (** **** Exercise: 2 stars, optional (evenb_S)  *)
 (** One inconvenient aspect of our definition of [evenb n] is the
