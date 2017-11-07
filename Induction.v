@@ -5,6 +5,7 @@
 
 Require Export Basics.
 
+
 (** For the [Require Export] to work, you first need to use
     [coqc] to compile [Basics.v] into [Basics.vo].  This is like
     making a .class file from a .java file, or a .o file from a .c
@@ -206,7 +207,33 @@ Proof.
      pose (proof_of_plus_n_Sm := plus_n_Sm n' n').
      rewrite -> proof_of_plus_n_Sm. reflexivity. Qed.
 
+(** Copied from Basics.v  because coqIDE complains about evenb not being defined *)
 
+Fixpoint evenb (n:nat) : bool :=
+  match n with
+  | O        => true
+  | S O      => false
+  | S (S n') => evenb n'
+  end.
+
+Theorem evenb_S_S : forall n: nat, evenb (S (S n)) = evenb n.
+Proof.
+(**
+     destruct n. reflexivity. reflexivity. Qed. WORKS
+     destruct n; reflexivity. Qed. ALSO WAORKS
+*)
+     intros n. induction n as [| n' IHn'].
+    - (* n = 0 *)
+      reflexivity.
+    - (* n = S n' *)
+      reflexivity. Qed.
+
+Theorem negb_involutive : forall b : bool,
+  negb (negb b) = b.
+Proof.
+  intros b. destruct b.
+  - reflexivity.
+  - reflexivity.  Qed.
 
 (** **** Exercise: 2 stars, optional (evenb_S)  *)
 (** One inconvenient aspect of our definition of [evenb n] is the
@@ -219,8 +246,18 @@ Proof.
 Theorem evenb_S : forall n : nat,
   evenb (S n) = negb (evenb n).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+ intros n. induction n as [| n' IHn'].
+    - (* n = 0 *)
+      simpl. reflexivity.
+    - (* n = S n' *)
+      pose (proof_of_evenb_S_S := evenb_S_S n').
+      rewrite -> proof_of_evenb_S_S.
+      rewrite -> IHn'.
+      rewrite negb_involutive.
+      reflexivity.
+Qed.
+
+
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics [destruct]
