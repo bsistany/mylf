@@ -3,9 +3,7 @@
 (* Final reminder: Please do not put solutions to the exercises in
    publicly accessible places.  Thank you!! *)
 
-(* Suppress some annoying warnings from Coq: *)
-Set Warnings "-notation-overridden,-parsing".
-From LF Require Export Lists.
+Require Export Lists.
 
 (* ################################################################# *)
 (** * Polymorphism *)
