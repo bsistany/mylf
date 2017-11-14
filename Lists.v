@@ -109,8 +109,7 @@ Proof.
 Theorem fst_swap_is_snd : forall (p : natprod),
   fst (swap_pair p) = snd p.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros p. destruct p as [n m]. simpl. reflexivity.  Qed.
 
 (* ################################################################# *)
 (** * Lists of Numbers *)
@@ -186,6 +185,7 @@ Fixpoint repeat (n count : nat) : natlist :=
   | S count' => n :: (repeat n count')
   end.
 
+Compute (repeat 2 3).
 (* ----------------------------------------------------------------- *)
 (** *** Length *)
 
@@ -207,6 +207,8 @@ Fixpoint app (l1 l2 : natlist) : natlist :=
   | nil    => l2
   | h :: t => h :: (app t l2)
   end.
+
+Compute (app [1;2;3] [6;7]).
 
 (** Actually, [app] will be used a lot in some parts of what
     follows, so it is convenient to have an infix operator for it. *)
@@ -259,8 +261,18 @@ Proof. reflexivity.  Qed.
     [countoddmembers] below. Have a look at the tests to understand
     what these functions should do. *)
 
-Fixpoint nonzeros (l:natlist) : natlist
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint nonzeros (l:natlist) : natlist :=
+  match l with
+   | nil => nil
+   | h :: t => match h with 
+                   | O => nonzeros t
+                   | _ => h :: nonzeros t
+                  end
+  end.
+
+Compute (nonzeros [1;0;2]).
+Compute (nonzeros [0;0]).
+
 
 Example test_nonzeros:
   nonzeros [0;1;0;2;3;0;0] = [1;2;3].
@@ -523,10 +535,36 @@ Proof.
     eventually reaching [nil], these two arguments together establish
     the truth of [P] for all lists [l].  Here's a concrete example: *)
 
+
+(** Bahman:
+
+    we begin with the goal of proving
+    [P(l)] for all [l] and break it down (by applying the [induction]
+    tactic) into two separate subgoals: one where we must show [P(nil)]
+    and another where we must show [P(l') -> P(cons n l')] for some number n.  
+*)
+
+(** Bahman:
+    Note about the [as...] clause naming:
+
+    The [induction] tactic takes an [as...]
+    clause that specifies the names of the variables to be introduced
+    in the subgoals.  Since there are two subgoals, the [as...] clause
+    has two parts, separated by [|].
+
+    In the first subgoal, [l1] is replaced by [nil].  No new variables
+    are introduced (so the first part of the [as...] is empty).
+
+    In the second subgoal, [l1] is replaced by [cons n l1'], and the
+    corresponding assumption is added to the context with the name
+    [IHl1'] (i.e., the Induction Hypothesis for [l1']).  These two names
+    are specified in the second part of the [as...] clause.
+*)
+
 Theorem app_assoc : forall l1 l2 l3 : natlist,
   (l1 ++ l2) ++ l3 = l1 ++ (l2 ++ l3).
 Proof.
-  intros l1 l2 l3. induction l1 as [| n l1' IHl1'].
+  intros l1 l2 l3. induction l1 as [| n l1' IHl1'].     
   - (* l1 = nil *)
     reflexivity.
   - (* l1 = cons n l1' *)
@@ -648,8 +686,9 @@ Proof.
   - (* l = nil *)
     reflexivity.
   - (* l = cons *)
-    simpl. rewrite -> app_length, plus_comm.
+    simpl. rewrite -> app_length, plus_comm. (* same as: rewrite -> app_length. rewrite -> plus_comm. *)
     simpl. rewrite -> IHl'. reflexivity.  Qed.
+
 
 (** For comparison, here are informal proofs of these two theorems:
 
@@ -733,6 +772,7 @@ Proof.
 (* ================================================================= *)
 (** ** [Search] *)
 
+
 (** We've seen that proofs can make use of other theorems we've
     already proved, e.g., using [rewrite].  But in order to refer to a
     theorem, we need to know its name!  Indeed, it is often hard even
@@ -745,6 +785,12 @@ Proof.
     to see a list of theorems that we have proved about [rev]: *)
 
 (*  Search rev. *)
+(** Bahman: In CoqIDE write rev and use the [Queries] menu and select Search and other commands,
+                    otherwise you will get this warning:
+                    Warning: query commands should not be inserted in scripts
+*)
+
+
 
 (** Keep [Search] in mind as you do the following exercises and
     throughout the rest of the book; it can save you a lot of time!
