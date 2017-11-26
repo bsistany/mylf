@@ -241,6 +241,17 @@ Theorem inversion_ex1 : forall (n m o : nat),
 Proof.
   intros n m o H. inversion H. reflexivity. Qed.
 
+(** Bahman: Cons is also Injective *)
+
+Theorem Cons_inj_1 : forall (X: Type)(n m : X)(k j : list X), (cons n k) = (cons m j) -> n = m.
+Proof.
+   intros. inversion H. reflexivity. Qed.
+
+Theorem Cons_inj_2 : forall (X: Type)(n m : X)(k j : list X), (cons n k) = (cons m j) -> k = j.
+Proof.
+   intros. inversion H. reflexivity. Qed.
+
+
 (** We can name the equations that [inversion] generates with an
     [as ...] clause: *)
 
@@ -855,12 +866,12 @@ Proof.
     in which all occurrences of [e] (in the goal and in the context)
     are replaced by [c]. *)
 
+
 (** **** Exercise: 3 stars, optional (combine_split)  *)
 Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
-  split l = (l1, l2) ->
-  combine l1 l2 = l.
+  split l = (l1, l2) -> combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+   (* FILL IN HERE *) Admitted.
 (** [] *)
 
 (** However, [destruct]ing compound expressions requires a bit of
@@ -924,7 +935,10 @@ Proof.
         + (* e5 = true *)
           apply beq_nat_true in Heqe5.
           rewrite -> Heqe5. reflexivity.
-        + (* e5 = false *) inversion eq.  Qed.
+        + (* e5 = false *) 
+            (* Bahman: when you see an inconsistent hyothsis in the context like 'eq: false = true' use 'inversion eq' or 'congruence' to prove goal from the falsity
+             *)
+          inversion eq.  Qed.
 
 (** **** Exercise: 2 stars (destruct_eqn_practice)  *)
 Theorem bool_fn_applied_thrice :
